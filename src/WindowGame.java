@@ -1,7 +1,7 @@
 import javax.swing.*;
 
 public class WindowGame {
-    public static final int WIDTH = 445, HEIGHT=635;
+    public static final int WIDTH = 445, HEIGHT=629;
     private JFrame window;
     private Board board;
     public WindowGame(){

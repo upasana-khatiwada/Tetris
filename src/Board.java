@@ -4,12 +4,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Random;
 
 public class Board extends JPanel implements KeyListener {
     //represents the number of frames per second that will be displayed on the screen
     private static  int FPS = 60;
     //represents the delay time between each frame in milliseconds.
-    private static int delay = FPS/1000;
+    private static int delay = 1000/FPS;
     public static final int BOARD_WIDTH =10;
     public static final int BOARD_HEIGHT =20;
     public static final int BLOCK_SIZE =30;
@@ -17,13 +18,16 @@ public class Board extends JPanel implements KeyListener {
     private Timer loop;
 
     //to create grid
-    private Color[][] board = new Color[BOARD_WIDTH][BOARD_HEIGHT];
+    private Color[][] board = new Color[BOARD_HEIGHT][BOARD_WIDTH];
     private Shape[] shapes = new Shape[7];
     private Color[] colors = {Color.decode("#ed1c24"), Color.decode("#ff7f27"), Color.decode("#fff200"),
             Color.decode("#22b14c"), Color.decode("#00a2e8"), Color.decode("#a349a4"), Color.decode("#3f48cc")};
     private Shape currentShape;
+    private Random random;
 
     public Board(){
+        random = new Random();
+
 
         // create shapes
         shapes[0] = new Shape(new int[][]{
@@ -60,7 +64,7 @@ public class Board extends JPanel implements KeyListener {
                 {1, 1}, // O shape;
         }, this, colors[6]);
 
-        currentShape = shapes[0];
+       currentShape = shapes[0];
 
 
         // Create a Timer object to update the game at regular intervals
@@ -85,14 +89,29 @@ public class Board extends JPanel implements KeyListener {
         currentShape.update();
 
     }
+    public void setCurrentShape(){
+        currentShape.reset();
+
+
+    }
     @Override
     protected void paintComponent(Graphics g){
 
-       super.paintComponent(g);
-       g.setColor(Color.BLACK);
-       g.fillRect(0,0,getWidth(),getHeight());
+        super.paintComponent(g);
 
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
 
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+
+                if (board[row][col] != null) {
+                    g.setColor(board[row][col]);
+                    g.fillRect(col * BLOCK_SIZE, row * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                }
+
+            }
+        }
         currentShape.render(g);
 
 
@@ -115,6 +134,9 @@ public class Board extends JPanel implements KeyListener {
 
 
     }
+    public Color[][] getBoard(){
+        return board;
+    }
 
     @Override
    public void keyTyped(KeyEvent e){
@@ -130,6 +152,8 @@ public class Board extends JPanel implements KeyListener {
         }
         else if(e.getKeyCode()== KeyEvent.VK_LEFT){
             currentShape.moveLeft();
+        }else if(e.getKeyCode()== KeyEvent.VK_UP){
+            currentShape.rotateShape();
         }
 
     }
