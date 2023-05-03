@@ -19,11 +19,11 @@ public class Shape {
     //This variable is used to store the amount of horizontal movement
     // that should be applied to the game object in each update cycle.
     private  int deltaX =0;
-    private boolean collision =false,moveX=false;
+    private boolean collision =false,moveX=true;
     private int[][] coords ;
     private Board board ;
     private Color color;
-    private int delay;
+    private int delay ;
     private long time, lastTime;
     private int timePassedFromCollision = -1;
     long deltaTime;
@@ -32,6 +32,9 @@ public class Shape {
         this.coords=coords;
         this.board = board;
         this.color = color;
+        delay = normal;
+        time = 0;
+        lastTime = System.currentTimeMillis();
     }
     public void setX(int x) {
         this.x=x;
@@ -46,24 +49,40 @@ public class Shape {
     }
 
     public void update(){
-        moveX = true;
-        deltaTime = System.currentTimeMillis() - lastTime;
-        time += deltaTime;
-        lastTime = System.currentTimeMillis();
 
-        if (collision && timePassedFromCollision > 500) {
-            for (int row = 0; row < coords.length; row++) {
+//        deltaTime = System.currentTimeMillis() - lastTime;
+//        time += deltaTime;
+//        lastTime = System.currentTimeMillis();
+
+//        if (collision && timePassedFromCollision > 500) {
+//            for (int row = 0; row < coords.length; row++) {
+//                for (int col = 0; col < coords[0].length; col++) {
+//                    if (coords[row][col] != 0) {
+//                        board.getBoard()[y + row][x + col] = color;
+//                    }
+//                }
+//            }
+//            checkLine();
+//           // board.addScore();
+//            board.setCurrentShape();
+//            //timePassedFromCollision = -1;
+//            return;
+//        }
+        if(collision){
+            for(int row = 0; row < coords.length; row++){
                 for (int col = 0; col < coords[0].length; col++) {
                     if (coords[row][col] != 0) {
                         board.getBoard()[y + row][x + col] = color;
-                    }
+                   }
                 }
+
+
             }
             checkLine();
-           // board.addScore();
             board.setCurrentShape();
-            timePassedFromCollision = -1;
             return;
+
+
         }
 
         //check moving horizontal for collision
@@ -87,6 +106,7 @@ public class Shape {
             }
 
         }
+        deltaX=0;
         //if the user presses the left or right arrow key to move the game object horizontally,
         // the code can update the "deltaX" value accordingly. If "deltaX" were not used,
         // the game object might move too fast or too slow in response to user input,
@@ -131,43 +151,31 @@ public class Shape {
                    for (int col = 0; col < coords[row].length; col++) {
                         if (coords[row][col] != 0) {
 
-                            if (board.getBoard()[y + 1 + row][x + col] != null) {
-                                collision=true;
+                            if (board.getBoard()[y + 1 + row][x +deltaX+ col] != null) {
+                                collision =true;
                             }
                         }
                     }
                 }
               if(!collision){
                   y++;
+
               }
 
           }
           else{
-              collision=true;
+              collision =true;
           }
             beginTime = System.currentTimeMillis();
         }
 
     }
-    private int[][] reverseRows(int[][] matrix) {
 
-        int middle = matrix.length / 2;
 
-        for (int i = 0; i < middle; i++) {
-            int[] temp = matrix[i];
-
-            matrix[i] = matrix[matrix.length - i - 1];
-            matrix[matrix.length - i - 1] = temp;
-        }
-
-        return matrix;
-
-    }
-
-    private void collision() {
-        collision = true;
-        timePassedFromCollision = 0;
-    }
+//    private void collision() {
+//        collision = true;
+//        timePassedFromCollision = 0;
+//    }
     public void rotateShape() {
 
         int[][] rotatedShape     = transposeMatrix(coords);
@@ -199,7 +207,22 @@ public class Shape {
         }
         return temp;
     }
-        private void checkLine() {
+    private int[][] reverseRows(int[][] matrix) {
+
+        int middle = matrix.length / 2;
+
+        for (int i = 0; i < middle; i++) {
+            int[] temp = matrix[i];
+
+            matrix[i] = matrix[matrix.length - i - 1];
+            matrix[matrix.length - i - 1] = temp;
+        }
+
+        return matrix;
+
+    }
+
+    private void checkLine() {
         int bottomline = board.getBoard().length-1;
         for (int topLine = board.getBoard().length-1;topLine>0;topLine--){
             int count = 0;
@@ -241,5 +264,20 @@ public class Shape {
     }
     public void moveLeft(){
         deltaX=-1;
+    }
+
+    public int[][] getCoords() {
+        return coords;
+    }
+
+    public int getX() {
+        return x;
+    }
+    public int getY() {
+        return y;
+    }
+
+    public Color getColor() {
+        return color;
     }
 }
